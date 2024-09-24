@@ -1,0 +1,117 @@
+<!-- src/main/resources/templates/campus.html -->
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Explorer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gray-100">
+<header class="bg-white shadow-sm">
+    <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center">
+            <h1 class="text-3xl font-bold text-gray-900">Campus Explorer</h1>
+            <nav class="flex space-x-4">
+                <a href="#" class="text-gray-500 hover:text-gray-900">Home</a>
+                <a href="#" class="text-gray-500 hover:text-gray-900">About</a>
+                <a href="#" class="text-gray-500 hover:text-gray-900">Contact</a>
+            </nav>
+        </div>
+    </div>
+</header>
+<main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+    <div class="px-4 py-6 sm:px-0">
+        <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+            <h2 class="text-xl font-semibold mb-2">Find Your Campus</h2>
+            <p class="text-gray-600 mb-4">Explore our campuses across different cities</p>
+            <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
+                <select id="citySelect" class="w-full sm:w-[180px] px-3 py-2 border border-gray-300 rounded-md">
+                    <option value="">Select City</option>
+                    <option th:each="city : ${uniqueCities}" th:value="${city}" th:text="${city}"></option>
+                </select>
+                <button id="searchButton" class="bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800">Search</button>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-sm p-4 mb-6">
+            <div class="flex space-x-2 mb-4">
+                <button id="mapViewBtn" class="bg-black text-white px-4 py-2 rounded-md"><i class="fas fa-map"></i> Map View</button>
+                <button id="listViewBtn" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-md"><i class="fas fa-list"></i> List View</button>
+            </div>
+            <div class="flex">
+                <div id="mapView" class="bg-gray-300 h-[400px] flex-1 flex items-center justify-center rounded-lg hidden">
+                    <p class="text-gray-600">Interactive Map Here</p>
+                </div>
+                <div id="itineraryModal" class="bg-white rounded-lg shadow-lg p-6 w-96 ml-4 hidden">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-xl font-semibold">Itinerary Details</h2>
+                        <button id="closeModal" class="text-gray-500 hover:text-gray-700">&times;</button>
+                    </div>
+                    <div class="flex items-center mb-4">
+                        <i id="transportIcon" class="fas fa-car text-2xl mr-2"></i>
+                        <span id="travelModeText" class="text-lg font-medium"></span>
+                    </div>
+                    <p id="distanceText" class="text-gray-600 mb-2"></p>
+                    <p id="durationText" class="text-gray-600 mb-2"></p>
+                    <p id="startAddress" class="text-gray-600 mb-2"></p>
+                    <p id="endAddress" class="text-gray-600"></p>
+                </div>
+            </div>
+            <div id="listView" class="space-y-4">
+                <div th:each="campus : ${campuses}" class="bg-white rounded-lg shadow-sm p-4">
+                    <h3 class="text-lg font-semibold flex justify-between items-center">
+                        <span th:text="${campus.nomC}"></span>
+                        <span class="bg-gray-200 text-gray-700 px-2 py-1 rounded-full text-sm" th:text="${campus.ville}"></span>
+                    </h3>
+                    <p class="text-gray-600 mb-2" th:text="${campus.ville}"></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-sm p-6">
+            <h2 class="text-xl font-semibold mb-2">Calculate Distance</h2>
+            <p class="text-gray-600 mb-4">Find the distance between two campuses</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <select id="fromCampus" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                    <option value="">From Campus</option>
+                    <option value="userLocation">Use My Location</option>
+                    <option th:each="campus : ${campusesNames}" th:value="${campus}" th:text="${campus}"></option>
+                </select>
+                <select id="toCampus" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                    <option value="">To Campus</option>
+                    <option th:each="campus : ${campusesNames}" th:value="${campus}" th:text="${campus}"></option>
+                </select>
+                <select id="travelMode" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                    <option value="">Travel Mode</option>
+                    <option value="driving">Driving</option>
+                    <option value="walking">Walking</option>
+                    <option value="bicycling">Bicycling</option>
+                    <option value="transit">Transit</option>
+                </select>
+                <button id="getItinerary" class="bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800">Find Itinerary</button>
+            </div>
+        </div>
+    </div>
+</main>
+<script th:inline="javascript">
+    var googleApiKey = /*[[${googleApiKey}]]*/ 'defaultKey';
+</script>
+<script src="/js/map.js"></script>
+</body>
+</html>
