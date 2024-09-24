@@ -1,4 +1,5 @@
 // src/main/resources/static/js/itinerary.js
+
 async function getItinerary(fromLat, fromLng, toLat, toLng, travelMode) {
     const response = await fetch(`/api/itinerary?origin=${fromLat},${fromLng}&destination=${toLat},${toLng}&mode=${travelMode}`);
     const data = await response.json();
@@ -147,8 +148,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // Move the map to the selected city
                 if (campuses.length > 0) {
-                    map.setCenter({ lat: campuses[0].latitude, lng: campuses[0].longitude });
-                    map.setZoom(12);
+                    mapInit.setCenter({ lat: campuses[0].latitude, lng: campuses[0].longitude });
+                    mapInit.setZoom(12);
                 }
             });
         } else {
