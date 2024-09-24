@@ -1,86 +1,4 @@
-let map;
-let markers = [];
-let directionsService;
-let directionsRenderer;
-let userLocationMarker;
-
-async function fetchCampuses(query = '') {
-    const response = await fetch(`/api/campuses${query}`);
-    return await response.json();
-}
-
-function addMarkers(campuses) {
-    markers.forEach(marker => marker.setMap(null)); // Clear existing markers
-    markers = [];
-    campuses.forEach((campus, index) => {
-        const marker = new google.maps.Marker({
-            position: { lat: campus.latitude, lng: campus.longitude },
-            map: map,
-            title: campus.nomC,
-            label: {
-                text: campus.nomC,
-                color: 'black',
-                fontSize: '14px',
-                fontWeight: 'bold',
-                position: 'bottom'
-            }
-        });
-        markers.push(marker);
-    });
-}
-
-function renderCampusList(campuses) {
-    const listView = document.getElementById('listView');
-    listView.innerHTML = '';
-    campuses.forEach((campus, index) => {
-        const campusCard = document.createElement('div');
-        campusCard.className = 'bg-white rounded-lg shadow-sm p-4 hover:shadow-md transition-shadow duration-300';
-        campusCard.innerHTML = `
-            <div class="flex items-center justify-between mb-2">
-                <h3 class="text-lg font-semibold">${campus.nomC}</h3>
-                <span class="bg-gray-200 text-gray-700 px-2 py-1 rounded-full text-sm">${campus.ville}</span>
-            </div>
-            <p class="text-gray-600 mb-2">${campus.adresse}</p>
-            <button class="viewMapBtn text-blue-500 hover:underline" data-index="${index}">View on Map</button>
-        `;
-
-        listView.appendChild(campusCard);
-    });
-
-    document.querySelectorAll('.viewMapBtn').forEach(button => {
-        button.addEventListener('click', (event) => {
-            const index = event.target.getAttribute('data-index');
-            if (markers[index]) {
-                listView.classList.add('hidden');
-                mapView.classList.remove('hidden');
-                map.setCenter(markers[index].getPosition());
-                map.setZoom(15);
-
-                // Clear the directions
-                directionsRenderer.setDirections({ routes: [] });
-            } else {
-                console.error('Marker not found for index:', index);
-            }
-        });
-    });
-}
-
-function initMap() {
-    map = new google.maps.Map(document.getElementById('mapView'), {
-        center: { lat: 43.6119, lng: 3.8772 },
-        zoom: 10
-    });
-
-    directionsService = new google.maps.DirectionsService();
-    directionsRenderer = new google.maps.DirectionsRenderer();
-    directionsRenderer.setMap(map);
-
-    fetchCampuses().then(campuses => {
-        renderCampusList(campuses);
-        addMarkers(campuses);
-    });
-}
-
+// src/main/resources/static/js/itinerary.js
 async function getItinerary(fromLat, fromLng, toLat, toLng, travelMode) {
     const response = await fetch(`/api/itinerary?origin=${fromLat},${fromLng}&destination=${toLat},${toLng}&mode=${travelMode}`);
     const data = await response.json();
@@ -176,8 +94,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const mapViewBtn = document.getElementById('mapViewBtn');
     const listViewBtn = document.getElementById('listViewBtn');
-    const mapView = document.getElementById('mapView');
-    const listView = document.getElementById('listView');
     const searchButton = document.getElementById('searchButton');
     const citySelect = document.getElementById('citySelect');
 
@@ -250,14 +166,4 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('closeModal').addEventListener('click', () => {
         document.getElementById('itineraryModal').classList.add('hidden');
     });
-
-    function loadGoogleMapsApi() {
-        const script = document.createElement('script');
-        script.src = `https://maps.googleapis.com/maps/api/js?key=${googleApiKey}&callback=initMap`;
-        script.async = true;
-        script.defer = true;
-        document.head.appendChild(script);
-    }
-
-    loadGoogleMapsApi();
 });
