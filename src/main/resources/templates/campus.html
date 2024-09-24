@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Campus Explorer</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="shortcut icon" type="image/x-icon" href="/img/logo.ico" />
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -19,6 +20,17 @@
             clip: rect(0, 0, 0, 0);
             white-space: nowrap;
             border-width: 0;
+        }
+    </style>
+
+    <style>
+        .loader {
+            border-top-color: #3498db;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
@@ -56,6 +68,9 @@
             </div>
             <div class="flex">
                 <div id="mapView" class="bg-gray-300 h-[400px] flex-1 flex items-center justify-center rounded-lg hidden">
+                    <div id="mapLoadingSpinner" class="hidden fixed inset-0 flex items-center justify-center bg-gray-100 bg-opacity-75">
+                        <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12"></div>
+                    </div>
                     <p class="text-gray-600">Interactive Map Here</p>
                 </div>
                 <div id="itineraryModal" class="bg-white rounded-lg shadow-lg p-6 w-96 ml-4 hidden">

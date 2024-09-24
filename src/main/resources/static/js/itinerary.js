@@ -1,9 +1,12 @@
 // src/main/resources/static/js/itinerary.js
 
 async function getItinerary(fromLat, fromLng, toLat, toLng, travelMode) {
+    document.getElementById('mapLoadingSpinner').classList.remove('hidden'); // Show spinner
     const response = await fetch(`/api/itinerary?origin=${fromLat},${fromLng}&destination=${toLat},${toLng}&mode=${travelMode}`);
     const data = await response.json();
+    document.getElementById('mapLoadingSpinner').classList.add('hidden'); // Hide spinner
     return data;
+
 }
 
 function showModal(distance, duration, travelMode, startAddress, endAddress) {
@@ -34,6 +37,23 @@ function showModal(distance, duration, travelMode, startAddress, endAddress) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    async function getItinerary(fromLat, fromLng, toLat, toLng, travelMode) {
+        const spinner = document.getElementById('mapLoadingSpinner');
+        if (spinner) {
+            spinner.classList.remove('hidden');
+            // add time out to show spinner
+        }
+        const response = await fetch(`/api/itinerary?origin=${fromLat},${fromLng}&destination=${toLat},${toLng}&mode=${travelMode}`);
+        const data = await response.json();
+        if (spinner) {
+            // add timeout
+            setTimeout(() => {
+                spinner.classList.add('hidden');
+            }, 10000);
+        }
+        return data;
+    }
+
     const getItineraryBtn = document.getElementById('getItinerary');
     getItineraryBtn.addEventListener('click', async () => {
         const fromCampusName = document.getElementById('fromCampus').value;
