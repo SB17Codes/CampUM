@@ -41,11 +41,22 @@ function renderCampusList(campuses) {
                 <span class="bg-gray-200 text-gray-700 px-2 py-1 rounded-full text-sm">${campus.ville}</span>
             </div>
             <p class="text-gray-600 mb-2">${campus.adresse}</p>
-            <button class="viewMapBtn text-blue-500 hover:underline" data-index="${index}">View on Map</button>
+           
+           <button class="viewMapBtn bg-black text-white px-4 py-2 rounded-md hover:cursor" data-index="${index}">View on Map</button>
+<button onclick="window.location.href='/campus/batiments?name=' + encodeURIComponent('${campus.nomC}') " class="viewBuildingBtn bg-black text-white px-4 py-2 rounded-md">View Buildings</button>
         `;
 
         listView.appendChild(campusCard);
     });
+
+    document.querySelectorAll('.viewBuildingBtn').forEach(button => {
+        button.addEventListener('click', (event) => {
+            const index = event.target.getAttribute('data-index');
+            const campusName = campuses[index].nomC;
+            window.location.href = `/campus/batiments?name='${encodeURIComponent(campusName)}`;
+        });
+    });
+
 
     document.querySelectorAll('.viewMapBtn').forEach(button => {
         button.addEventListener('click', (event) => {
@@ -63,6 +74,8 @@ function renderCampusList(campuses) {
             }
         });
     });
+
+
 }
 
 function initMap() {

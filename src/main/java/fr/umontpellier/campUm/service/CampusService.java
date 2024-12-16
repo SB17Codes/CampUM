@@ -1,13 +1,10 @@
 package fr.umontpellier.campUm.service;
 
 import fr.umontpellier.campUm.entity.Campus;
+import fr.umontpellier.campUm.exception.ResourceNotFoundException;
 import fr.umontpellier.campUm.repository.CampusRepository;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
-
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,20 +19,14 @@ public class CampusService {
         return campusRepository.findAll();
     }
 
-    // Find campuses by name
-
     public Campus findCampusesByName(String name) {
-        return campusRepository.findByNomC(name);
+        return campusRepository.findByNomC(name)
+                .orElseThrow(() -> new ResourceNotFoundException("Campus with name '" + name + "' not found."));
     }
-
-
-    // Find campuses by city
 
     public List<Campus> findCampusesByCity(String city) {
         return campusRepository.findByVille(city);
     }
-
-    // get unique cities'
 
     public List<String> getUniqueCities() {
         return campusRepository.findAll().stream()
@@ -44,14 +35,26 @@ public class CampusService {
                 .collect(Collectors.toList());
     }
 
-    // get campuses names
+    public Campus createCampus(Campus campus) {
+        return campusRepository.save(campus);
+    }
 
-    public List<String> getCampusesNames() {
-        return campusRepository.findAll().stream()
-                .map(Campus::getNomC)
-                .collect(Collectors.toList());
+    public Campus updateCampus(String name, Campus campusDetails) {
+        Campus campus = campusRepository.findByNomC(name)
+                .orElseThrow(() -> new ResourceNotFoundException("Campus with name '" + name + "' not found."));
+        campus.setVille(campusDetails.getVille());
+        campus.setAdresse(campusDetails.getAdresse());
+        campus.setLatitude(campusDetails.getLatitude());
+        campus.setLongitude(campusDetails.getLongitude());
+        campus.setType(campusDetails.getType());
+        campus.setPhone(campusDetails.getPhone());
+        campus.setWebsite(campusDetails.getWebsite());
+        return campusRepository.save(campus);
+    }
+
+    public void deleteCampus(String name) {
+        Campus campus = campusRepository.findByNomC(name)
+                .orElseThrow(() -> new ResourceNotFoundException("Campus with name '" + name + "' not found."));
+        campusRepository.delete(campus);
     }
 }
-
-
-
