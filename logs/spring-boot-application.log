@@ -1,0 +1,2 @@
+2024-12-16T00:20:08.034+01:00  WARN 18816 --- [CampUm] [http-nio-8080-exec-7] o.h.engine.jdbc.spi.SqlExceptionHelper   : SQL Error: 3819, SQLState: HY000
+2024-12-16T00:20:08.164+01:00 ERROR 18816 --- [CampUm] [http-nio-8080-exec-7] o.h.engine.jdbc.spi.SqlExceptionHelper   : Check constraint 'dom_typeS' is violated.
